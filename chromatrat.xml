@@ -1,0 +1,76 @@
+<tool id="chromatra_t" name="Chromatra T" version="1.0.0">
+  <description>for visualizing genome-wide chromatin modifications</description>
+  <command interpreter="python">chromatrat.py $gffinput $feainput $imgformat $stepwidth '$classboundaries' $upstreamstretch $maxx $tickspacing '$title' $output</command>
+  <inputs>
+    <param name="gffinput" format="gff" type="data" label="Normalized enrichment scores"/>
+    <param name="feainput" format="tabular" type="data" label="Feature descriptions"/>
+    <param name="imgformat" type="select" label="Image format">
+        <option value="svg" selected="true">svg</option>
+        <option value="png">png</option>
+	<option value="pdf">pdf</option>
+    </param>
+    <param name="stepwidth" type="integer" value="150" min="1" label="Bin size in bp" />
+    <param name="classboundaries" type="text" value="1, 4, 16, 50, 200" size="30" label="Class boundaries" />
+    <param name="upstreamstretch" type="integer" value="450" min="0" label="Number of bp upstream of feature start to be plotted" />
+    <param name="maxx" type="integer" value="5000" label="Max bp to be plotted  along x-coordinate. (Enter -1 for max feature length)"/>
+    <param name="tickspacing" type="integer" value="1000" label="Tick spacing along x-coordinate" />
+    <param name="title" type="text" value="" size="30" label="Plot title" />
+  </inputs>
+  <outputs>
+    <data format="svg" name="output">
+	<change_format>
+		<when input="imgformat" value="png" format="png" />
+		<when input="imgformat" value="pdf" format="pdf" />
+		<when input="imgformat" value="svg" format="svg" />
+	</change_format>
+    </data>
+  </outputs>
+
+  <requirements>
+    <requirement type="python-module">matplotlib</requirement>
+  </requirements>
+
+  <help>
+CHROMATRA T visualizes the enrichment of chromatin modification across genomic features (e.g. all transcripts of a genome) in an unbiased way by accounting for feature length.
+Furthermore, CHROMATRA T groups features based on a second characteristic (e.g. transcriptional frequency of transcripts).
+
+-----
+
+.. class:: infomark
+
+**Normalized enrichment scores**
+
+Enrichment scores must be provided in *GGFv3* format.
+
+.. class:: infomark
+
+**Feature descriptions**
+
+Features must be provided in a *TAB*-delimited format in this order:
+
+-1. feature name
+
+-2. chromosome number
+
+-3. strand
+
+-4. feature start
+
+-5. feature end
+
+-6. feature attribute
+
+.. class:: infomark
+
+**Class boundaries**
+
+Comma-seperated values spanning the *entire* numerical range of feature attributes. Values are interpreted as upper limits of the classes.
+Example: Assuming the feature attribute to be transcriptional frequency of transcripts and the attribute value range to be 0.1 up to 85.3 mRNA/h, a proper class boundary specification might look like: "1, 5, 10, 100".
+This would partition the range of transcriptional frequencies into 4 classes such that *class 1* would contain all transcripts less or equal to 1 mRNA/h, *class 2* all greater than 1 and  less or equal to 5 mRNA/h, *class 3* all greater than 5 and  less or equal 10 mRNA/h, and *class 4* all transcripts  greater than 10 (and less than 100) mRNA/h.
+
+.. class:: warningmark
+
+The last boundary value must be greater or equal to the largest attribute value.
+  </help>
+
+</tool>
